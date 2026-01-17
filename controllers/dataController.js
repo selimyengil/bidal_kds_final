@@ -101,3 +101,57 @@ exports.getBolgePerformans = async (req, res) => {
         res.status(500).send("Veritabanı hatası");
     }
 };
+
+
+exports.updateUrunFiyat = async (req, res) => {
+    const { urun_id, yeni_fiyat } = req.body;
+
+    try {
+        // KURAL KONTROLÜ
+        if (yeni_fiyat <= 0) {
+            return res.status(400).json({ 
+                success: false, 
+                message: "HATA: İş kuralı gereği ürün fiyatı 0 veya negatif olamaz!" 
+            });
+        }
+
+        // Güncelleme İşlemi (CRUD - Update)
+        await sequelize.query(`
+            UPDATE urunler SET guncel_fiyat = ${yeni_fiyat} WHERE urun_id = ${urun_id}
+        `);
+
+        res.json({ success: true, message: "Fiyat başarıyla güncellendi." });
+
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+// SENARYO 2: Ürün Silme (Delete)
+// İş Kuralı: Eğer bir ürün geçmişte satılmışsa (satislar tablosunda varsa) silinemez.
+exports.deleteUrun = async (req, res) => {
+    const { urun_id } = req.body; // veya params
+
+    try {
+        // Önce ürünün satışı var mı kontrol et (Read)
+        const [satisKayitlari] = await sequelize.query(`
+            SELECT COUNT(*) as adet FROM urun_satis WHERE urun_id = ${urun_id}
+        `);
+
+        // KURAL KONTROLÜ
+        if (satisKayitlari[0].adet > 0) {
+            return res.status(400).json({ 
+                success: false, 
+                message: `HATA: Bu ürünle ilişkili ${satisKayitlari[0].adet} adet geçmiş satış kaydı var. Veri bütünlüğü için silinemez!` 
+            });
+        }
+
+        // Satışı yoksa sil (CRUD - Delete)
+        await sequelize.query(`DELETE FROM urunler WHERE urun_id = ${urun_id}`);
+        
+        res.json({ success: true, message: "Ürün başarıyla silindi." });
+
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};

@@ -55,3 +55,26 @@ Projeyi yerel makinenizde çalıştırmak için aşağıdaki adımları izleyin:
     # Veya sadece frontend için
     npm run vite
     ```
+
+    ## 📋 İş Kuralları ve Senaryolar
+
+Proje kapsamında veri bütünlüğünü korumak için aşağıdaki 2 özel senaryo uygulanmıştır:
+
+1.  **Güvenli Ürün Silme:** `DELETE /api/urun-sil`
+    * **Kural:** Bir ürün silinmek istendiğinde sistem önce geçmiş satış kayıtlarını kontrol eder. Eğer ürün daha önce satılmışsa, muhasebe kayıtlarının bozulmaması için silme işlemine izin verilmez.
+    
+2.  **Fiyat Kontrolü:** `PUT /api/urun-guncelle`
+    * **Kural:** Ürün fiyat güncellemelerinde negatif veya 0 değeri girilmesi engellenmiştir.
+
+## 🔌 API Endpoint Listesi
+
+| Metot | Endpoint | Açıklama |
+| :--- | :--- | :--- |
+| POST | `/api/login` | Kullanıcı girişi ve JWT üretimi |
+| GET | `/api/sezon-trendi` | Aylık ciro verilerini çeker |
+| GET | `/api/urun-analiz` | Ürün satış ve tahmin verileri |
+| GET | `/api/cari-analiz` | Müşteri risk ve VIP raporu |
+| PUT | `/api/urun-guncelle` | Ürün fiyatını günceller (İş kurallı) |
+| DELETE | `/api/urun-sil` | Ürünü siler (İş kurallı) |
+
+![ER Diyagramı](./er_diagram.png)
