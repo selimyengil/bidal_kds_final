@@ -17,8 +17,8 @@ Bu proje aşağıdaki teknolojiler kullanılarak geliştirilmiştir:
 
 **Backend (Sunucu):**
 * **Node.js:** Sunucu çalışma ortamı
-* **Express.js:** Web sunucusu framework'ü (MVC yapısına uygun)
-* **Mongoose (MongoDB):** Veritabanı modellemesi (Tahmini)
+* **Express.js:** Web sunucusu framework
+
 
 
 * **Models:** Veritabanı şemaları ve veri yapısı.
